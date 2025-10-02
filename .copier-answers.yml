@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.4.0
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: github@qirui.li
+author_name: Magic Q
+has_binder: false
+has_settings: false
+kind: frontend
+labextension_name: assistant
+project_short_description: A JupyterLab extension for AI-assist editing
+python_name: assistant
+repository: https://github.com/honeymath/jupyter-extension
+test: true
+
