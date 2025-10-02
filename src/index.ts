@@ -15,15 +15,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
   activate: (app: JupyterFrontEnd, tracker: INotebookTracker) => {
     console.log('✨ Assistant 插件已激活');
 
-    // 监听 Comm 通道
     app.serviceManager.sessions.runningChanged.connect(() => {
       const session = tracker?.currentWidget?.sessionContext?.session;
       if (!session?.kernel) return;
 
-      session.kernel.commManager.registerTarget('jupyter_comm_bridge', comm => {
+      // 👇 用 any 绕过 commManager 类型限制
+      const kernel: any = session.kernel;
+
+      kernel.commManager.registerTarget('jupyter_comm_bridge', (comm: any) => {
         console.log('🛰️ Comm 通道已建立');
 
-        comm.onMsg = async msg => {
+        comm.onMsg = async (msg: any) => {
           const { command, request_id, ...args } = msg.content.data;
           let result = null;
 
@@ -33,7 +35,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
             if (command === 'get_cell') {
               const cell = notebook.widgets[args.index];
-              result = cell?.model.value.text ?? '';
+              result = cell?.model?.value?.text ?? '';
             }
 
             if (command === 'set_cell') {
@@ -49,7 +51,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
               result = 'executed';
             }
 
-            // 回传结果
             if (request_id) {
               comm.send({ request_id, result });
             }
