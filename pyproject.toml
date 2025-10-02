@@ -26,13 +26,10 @@ dependencies = [
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
-[tool.hatch.version]
-source = "nodejs"
-
-[tool.hatch.metadata.hooks.nodejs]
-fields = ["description", "authors", "urls", "keywords"]
-
-[tool.hatch.build.targets.sdist]
+# 🔧 removed nodejs hook to avoid hatch build errors
+# [tool.hatch.metadata.hooks.nodejs]
+# dependencies = ["jlpm"]
+# build = "install:extension"
 artifacts = ["assistant/labextension"]
 exclude = [".github", "binder"]
 
