@@ -1,16 +1,21 @@
+import warnings
+
 try:
     from ._version import __version__
 except ImportError:
-    # Fallback when using the package in dev mode without installing
-    # in editable mode with pip. It is highly recommended to install
-    # the package from a stable release or in editable mode: https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
-    import warnings
     warnings.warn("Importing 'assistant' outside a proper installation.")
     __version__ = "dev"
 
+from .handler import CommandHandler
 
-def _jupyter_labextension_paths():
-    return [{
-        "src": "labextension",
-        "dest": "assistant"
-    }]
+def _load_jupyter_server_extension(server_app):
+    """
+    Jupyter 启动时调用：注册 HTTP Handler 和初始化 Comm 状态
+    """
+    web_app = server_app.web_app
+    web_app.settings['comm'] = None  # 后续在前端通告时赋值
+    web_app.settings['pending'] = {}  # 保存 request_id -> Future
+
+    web_app.add_handlers(".*", [(r"/command", CommandHandler)])
+
+    server_app.log.info("✨ Assistant server extension 已加载 /command 接口")
