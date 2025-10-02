@@ -35,13 +35,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
             if (command === 'get_cell') {
               const cell = notebook.widgets[args.index];
-              result = cell?.model?.value?.text ?? '';
+              result = cell?.model?.sharedModel?.getSource() ?? '';
             }
 
             if (command === 'set_cell') {
               const cell = notebook.widgets[args.index];
               if (cell) {
-                cell.model.value.text = args.content;
+                cell.model.sharedModel.setSource(args.content);
                 result = 'ok';
               }
             }
